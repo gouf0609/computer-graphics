@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html>
+<head>
+<div id="info">Press 'Z' to  toggle
+  <br> 
+  <br>
+  <br>
+  <button id="t1" style="width:10%">t1</button>
+  <button id="t2" style="width:10%">t2</button>
+  <button id="t3" style="width:10%">t3</button>
+
+
+</div>
+<style>
+#info {
+  position: absolute;
+  top: 3%;
+  width: 100%;
+  padding: 10px;
+  text-align: center;
+  color: #ffffff
+}
+
+body {
+  overflow: hidden;
+}
+
+</style>
+</head>
+
+<body>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/107/three.min.js"></script>
+<script src="https://threejs.org/examples/js/controls/OrbitControls.js"></script>
+<script src="https://threejs.org/examples/js/controls/OrbitControls.js"></script>
+<script src="https://raw.githack.com/jyunming-chen/tutsplus/master/js/KeyboardState.js"></script>
+<script src="https://threejs.org/examples/js/controls/OrbitControls.js"></script>
+<script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
+
+<script>
+javascript:(function(){var script=document.createElement('script');script.onload=function(){var stats=new Stats();document.body.appendChild(stats.dom);requestAnimationFrame(function loop(){stats.update();requestAnimationFrame(loop)});};script.src='https://mrdoob.github.io/stats.js/build/stats.min.js';document.head.appendChild(script);})()
+
+var renderer, scene, camera;
+var matc = new THREE.MeshBasicMaterial({
+		color: 0x555555,
+		side: THREE.DoubleSide
+	});
+	var mat1 = new THREE.MeshNormalMaterial({ color: 0x555555 ,side: THREE.DoubleSide});
+	var mat = new THREE.MeshNormalMaterial();
+var n=0;
+var controls;
+var angle=0;
+var ushape;
+var tri;
+var turn=0;
+var sec=Math.PI*2/60;
+var keyboard;
+var t1=1,t2=0,t3=0;
+var clock = new THREE.Clock();
+var time=clock.getElapsedTime();
+var triangle;
+var circle ;
+var base ;
+var a ;
+var gg = new THREE.CircleGeometry( 60, 64 );
+var circle2 = new THREE.Mesh( gg, mat );
+circle2.rotateX ( Math.PI/2 ) ;
+	circle2.position.set(0,0,0);
+$("#t1").click(function() {
+if(t3===1)t3=0;
+	if(t2===1)t2=0;
+  if(t1===0)t1=1;
+  scene.add( circle );
+	scene.add (a);
+	scene.add (ushape);
+	scene.remove(circle2);
+});
+$("#t2").click(function() {
+	t1=0;
+	t3=0;
+  if(t2===0)t2=1;
+  scene.add( circle );
+	scene.add (a);
+	scene.add (ushape);
+	scene.remove(circle2);
+});
+$("#t3").click(function() {
+if(t1===1)t1=0;
+if(t2===1)t2=0;
+ if(t3===0)t3=1;
+ scene.remove(a);
+scene.remove(ushape);
+scene.remove(circle);
+scene.add (circle2);
+});
+init();
+animate();
+
+function init () {
+	
+	angle = 0;
+	
+	renderer = new THREE.WebGLRenderer();
+	document.body.appendChild (renderer.domElement);
+	var width = window.innerWidth;
+	var height = window.innerHeight;
+	
+	renderer.setSize (width, height);
+	
+	renderer.setClearColor (0x111111);
+	
+	scene = new THREE.Scene();
+	var grid = new THREE.GridHelper(200,20, 'red', 'white');
+	//scene.add (grid);
+	var axes = new THREE.AxesHelper (5);
+	//scene.add (axes);
+	
+	camera = new THREE.PerspectiveCamera (35, width/height, 1, 3000);
+	camera.position.y = -300;
+	camera.position.z = 0;
+	camera.lookAt (new THREE.Vector3(0,0,0));
+	
+	//controls = new THREE.OrbitControls(camera, renderer.domElement);
+	
+	 
+	//tri = new THERR.Vector3()
+	var tri = new THREE.Geometry();
+
+		tri.vertices.push(
+		new THREE.Vector3( 10,  -10, 0 ),
+		new THREE.Vector3( 10, 10, 0 ),
+		new THREE.Vector3(  -10, 10, 0 ),
+		
+	);
+	triangle = new THREE.Mesh( tri,mat);
+	triangle.drawMode = THREE.TrianglesDrawMode; //default
+	triangle.rotateX ( Math.PI/2 ) ;
+	triangle.rotateZ ( Math.PI/4 ) ;
+	triangle.position.set(0,-1,40);
+	ushape = new THREE.Group();
+	ushape.add (triangle);
+	//scene.add( triangle );
+	tri.faces.push( new THREE.Face3( 0, 1, 2 ),new THREE.Face3( 0, -1, 2 ),new THREE.Face3( 0, 1, -2 ));
+	circle = new THREE.Mesh(new THREE.CircleGeometry( 60, 64 ),matc);
+	circle.rotateX ( Math.PI/2 ) ;
+	circle.position.set(0,0,0);
+	base = new THREE.Mesh (new THREE.BoxGeometry(10,0,40), mat);
+	base.position.set (0,-1,20);
+	ushape.add (base);
+	/*var col1 = new THREE.Mesh (new THREE.TetrahedronGeometry(10,0), mat);
+	col1.position.set (40,-1,-5);
+	ushape.add (col1);*/
+	 a = new THREE.Mesh (new THREE.BoxGeometry(5,0,10), mat1);
+	a.position.set (0,-1,60);
+	
+	/*circle2=new THREE.Mesh(new THREE.CircleGeometry( 60, 64),mat);
+	circle2.rotateX ( Math.PI/2 ) ;
+	circle2.position.set(0,0,0);*/
+	scene.add( circle );
+	scene.add (a);
+	scene.add (ushape);
+	
+	
+
+	keyboard = new KeyboardState();
+	window.addEventListener('resize', onWindowResize, false);
+	
+}
+
+function onWindowResize() {
+  
+	var width = window.innerWidth;
+  var height = window.innerHeight;
+  camera.aspect = width / height;
+  camera.updateProjectionMatrix();
+  renderer.setSize(width, height);
+	
+}
+
+function animate() {
+	keyboard.update();
+	if (keyboard.down('Z'))
+		turn=!turn;
+	if(turn)
+		angle += Math.PI*2/60/60;
+		
+	requestAnimationFrame(animate);
+	render();
+	if(t1)
+	ushape.rotation.y = angle;
+	if(t2)
+	{
+		if(n%60===0)
+		ushape.rotation.y = angle;
+	}
+	n++;
+	if(t3)
+	{
+		let gg=new THREE.CircleGeometry( 60, 64 ,0,angle);
+		scene.remove(circle2);
+		circle2=new THREE.Mesh(gg,mat);
+		scene.add(circle2);
+	}
+}
+
+function render() {
+	
+	renderer.render(scene, camera);
+	
+}
+
+</script>
+</body>
+
+</html>
