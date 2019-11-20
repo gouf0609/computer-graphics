@@ -40,13 +40,13 @@ function init() {
   let controls = new THREE.OrbitControls(camera, renderer.domElement);
   ////////////////////////////////////////////////////////////////
   var gridXZ = new THREE.GridHelper(200, 20, 'red', 'white');
-  scene.add(gridXZ);
+  //scene.add(gridXZ);
   
     var light1 = new THREE.PointLight( 0xffffff, 0.35);
 	light1.position.set( -50, 200, -50 );
 	scene.add( light1 );
   
-  floor = new THREE.Mesh (new THREE.PlaneGeometry (175,150,4,4), new THREE.MeshLambertMaterial({color:0x332211,side:THREE.DoubleSide}));
+  floor = new THREE.Mesh (new THREE.PlaneGeometry (287,222,4,4), new THREE.MeshLambertMaterial({color:0x332211,side:THREE.DoubleSide}));
   floor.rotation.x = -Math.PI/2 
   floor.receiveShadow = true;
   scene.add (floor)
@@ -117,12 +117,46 @@ function init() {
   
   
   
+  
+  
+  
   light = new THREE.PointLight( 0xffffff, 1 );
 light.position.set( 69, 50, 15 );
 scene.add( light );
 lightr = new THREE.PointLight( 0xffffff, 1 );
 lightr.position.set( 0, 87, 0);
 scene.add( lightr );
+
+light.castShadow = true;
+  light.shadow.mapSize.width = 1024;
+  light.shadow.mapSize.height = 1024;
+  light.shadow.camera.near = 5;
+  light.shadow.camera.far = 330;
+ // light.shadow.camera.fov = light.angle / Math.PI * 180* 2;
+  
+  light1.castShadow = false;
+  light1.shadow.mapSize.width = 1024;
+  light1.shadow.mapSize.height = 1024;
+  light1.shadow.camera.near = 10;
+  light1.shadow.camera.far = 200;
+ //light1.shadow.camera.fov = light.angle / Math.PI * 180 * 2;
+  
+  lightr.castShadow = false;
+  lightr.shadow.mapSize.width = 1024;
+  lightr.shadow.mapSize.height = 1024;
+  lightr.shadow.camera.near = 10;
+  lightr.shadow.camera.far = 200;
+  //lightr.shadow.camera.fov = light.angle / Math.PI * 180 * 2;
+  
+   renderer.shadowMap.enabled = true;
+  renderer.shadowMap.type = THREE.PCFShadowMap;
+  drink.castShadow = true
+  drink.receiveShadow = true
+ chair.castShadow = true
+  chair.receiveShadow = true
+  floor.receiveShadow = true;
+  
+
   myswitch = new THREE.Group();
   casing = new THREE.Mesh(new THREE.CylinderGeometry(3,3, 5, 20), new THREE.MeshPhongMaterial())
   core = new THREE.Mesh(new THREE.CylinderGeometry(2, 2, 4, 20), new THREE.MeshPhongMaterial({
@@ -218,6 +252,13 @@ function chair1 (chair, targetSize=40) {
 		chair =  unitize (object, targetSize);
 		chair.position.set(7,20,38);
 	    	chair.rotation.y = -3*(Math.PI/4);
+			chair.traverse (	
+         function (mesh) {
+            if (mesh instanceof THREE.Mesh) {
+              mesh.castShadow = true;
+              mesh.receiveShadow = true;}
+		 }
+     );
 		scene.add (chair);
 		
 		//chair.setRotationFromEuler (new THREE.Euler (3.1416/2, 0, -3.1416/2, 'ZYX'))
@@ -242,6 +283,13 @@ function lantern1 (lantern, targetSize=5) {
     objLoader.load(lantern+'.obj', function(object) {
 		
 		lantern =  unitize (object, targetSize);
+		lantern.traverse (
+         function (mesh) {
+            if (mesh instanceof THREE.Mesh) {
+              mesh.castShadow = true;
+              mesh.receiveShadow = true;}
+		 }
+     );
 		//theObject.add ( new THREE.BoxHelper (theObject) )
 		//chair.name = 'OBJ'
 	   	//lantern.rotation.z = (Math.PI);
