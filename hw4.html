@@ -96,7 +96,7 @@ function init() {
 	let loader = new THREE.TextureLoader();
 	loader.crossOrigin = '';
 	texture = loader.load('https://i.imgur.com/FxWCYDP.jpg');
-	alpha = loader.load('https://i.imgur.com/29r3otw.png');//簍空圖案
+	alpha = loader.load('https://i.imgur.com/29r3otw.png');//簍空
 	var texMat = new THREE.MeshLambertMaterial({
     map: texture,
 	alphaMap: alpha,
@@ -121,11 +121,12 @@ light.position.set( 50, 50, 50 );
 scene.add( light );
 
   myswitch = new THREE.Group();
-  casing = new THREE.Mesh(new THREE.CylinderGeometry(15, 15, 10, 20), new THREE.MeshPhongMaterial())
-  core = new THREE.Mesh(new THREE.CylinderGeometry(10, 10, 12, 20), new THREE.MeshPhongMaterial({
+  casing = new THREE.Mesh(new THREE.CylinderGeometry(3,3, 5, 20), new THREE.MeshPhongMaterial())
+  core = new THREE.Mesh(new THREE.CylinderGeometry(1.5, 1.5, 3, 20), new THREE.MeshPhongMaterial({
     //color: 'red'
   }))
   myswitch.add(casing, core);
+  myswitch.position.set(45,25,20);
   scene.add(myswitch);
   casing.position.y = 5;
   core.position.y = 6;
@@ -218,7 +219,7 @@ function lantern1 (lantern, targetSize=5) {
 		//chair.name = 'OBJ'
 	   	//lantern.rotation.z = (Math.PI);
 		//chair.rotation.y = Math.PI;
-		lantern.position.set(69,40,15);
+		lantern.position.set(69,45,15);
 	    
 		scene.add (lantern);
 		
