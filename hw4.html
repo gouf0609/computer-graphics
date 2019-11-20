@@ -122,11 +122,11 @@ scene.add( light );
 
   myswitch = new THREE.Group();
   casing = new THREE.Mesh(new THREE.CylinderGeometry(3,3, 5, 20), new THREE.MeshPhongMaterial())
-  core = new THREE.Mesh(new THREE.CylinderGeometry(1.5, 1.5, 3, 20), new THREE.MeshPhongMaterial({
+  core = new THREE.Mesh(new THREE.CylinderGeometry(1.5, 1.5, 4, 20), new THREE.MeshPhongMaterial({
     //color: 'red'
   }))
   myswitch.add(casing, core);
-  myswitch.position.set(45,25,20);
+  myswitch.position.set(35,20,20);
   scene.add(myswitch);
   casing.position.y = 5;
   core.position.y = 6;
