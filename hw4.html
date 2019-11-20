@@ -187,8 +187,8 @@ function chair1 (chair, targetSize=40) {
 		
 		chair =  unitize (object, targetSize);
 
-		chair.position.set(20,20,30);
-	    
+		chair.position.set(13,20,30);
+	    	chair.rotation.y = 3*(Math.PI/4);
 		scene.add (chair);
 		
 		//chair.setRotationFromEuler (new THREE.Euler (3.1416/2, 0, -3.1416/2, 'ZYX'))
@@ -216,9 +216,9 @@ function lantern1 (lantern, targetSize=10) {
 		lantern =  unitize (object, targetSize);
 		//theObject.add ( new THREE.BoxHelper (theObject) )
 		//chair.name = 'OBJ'
-	   	lantern.rotation.z = 3*(Math.PI/4);
+	   	//lantern.rotation.z = (Math.PI);
 		//chair.rotation.y = Math.PI;
-		lantern.position.set(69,20,15);
+		lantern.position.set(69,40,15);
 	    
 		scene.add (lantern);
 		
