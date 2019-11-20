@@ -15,35 +15,36 @@ body {
 	<script src="https://raw.githack.com/mrdoob/three.js/dev/examples/js/loaders/MTLLoader.js"></script>
 	<script src="https://raw.githack.com/mrdoob/three.js/dev/examples/js/loaders/OBJLoader.js"></script>
 <script>
-
 var camera, scene, renderer;
 var chair = new THREE.Object3D();
 var modelName = "chair";
 var lantern = new THREE.Object3D();
 var modelName = "lantern";
+var pickables = [];
+var raycaster = new THREE.Raycaster();
+var mouse = new THREE.Vector2();
+
+
+
+var lit = false;
 init();
 animate();
-
 function init() {
-
   scene = new THREE.Scene();
-
   renderer = new THREE.WebGLRenderer();
   renderer.setSize(window.innerWidth, window.innerHeight);
   renderer.setClearColor(0x888888);
   document.body.appendChild(renderer.domElement);
-
   camera = new THREE.PerspectiveCamera(50, window.innerWidth / window.innerHeight, 1, 1000);
-  camera.position.z = 300;
+  camera.position.z = 250;
   let controls = new THREE.OrbitControls(camera, renderer.domElement);
-
   ////////////////////////////////////////////////////////////////
   var gridXZ = new THREE.GridHelper(200, 20, 'red', 'white');
   scene.add(gridXZ);
   
-    var light = new THREE.PointLight( 0xffffff, 2);
-	light.position.set( 0, 50, 0 );
-	scene.add( light );
+    var light1 = new THREE.PointLight( 0xffffff, 0.35);
+	light1.position.set( -50, 200, -50 );
+	scene.add( light1 );
   
   floor = new THREE.Mesh (new THREE.PlaneGeometry (175,150,4,4), new THREE.MeshLambertMaterial({color:0x332211,side:THREE.DoubleSide}));
   floor.rotation.x = -Math.PI/2 
@@ -95,8 +96,8 @@ function init() {
 	var penboxg = new THREE.CylinderGeometry( 4, 4, 20, 32 );
 	let loader = new THREE.TextureLoader();
 	loader.crossOrigin = '';
-	texture = loader.load('https://i.imgur.com/FxWCYDP.jpg');
-	alpha = loader.load('https://i.imgur.com/29r3otw.png');//簍空
+	texture = loader.load('https://i.imgur.com/Q62e3vj.png');
+	alpha = loader.load('https://i.imgur.com/pYpcBHY.png');
 	var texMat = new THREE.MeshLambertMaterial({
     map: texture,
 	alphaMap: alpha,
@@ -117,12 +118,14 @@ function init() {
   
   
   light = new THREE.PointLight( 0xffffff, 1 );
-light.position.set( 50, 50, 50 );
+light.position.set( 69, 50, 15 );
 scene.add( light );
-
+lightr = new THREE.PointLight( 0xffffff, 1 );
+lightr.position.set( 0, 87, 0);
+scene.add( lightr );
   myswitch = new THREE.Group();
   casing = new THREE.Mesh(new THREE.CylinderGeometry(3,3, 5, 20), new THREE.MeshPhongMaterial())
-  core = new THREE.Mesh(new THREE.CylinderGeometry(1.5, 1.5, 4, 20), new THREE.MeshPhongMaterial({
+  core = new THREE.Mesh(new THREE.CylinderGeometry(2, 2, 4, 20), new THREE.MeshPhongMaterial({
     //color: 'red'
   }))
   myswitch.add(casing, core);
@@ -131,17 +134,26 @@ scene.add( light );
   casing.position.y = 5;
   core.position.y = 6;
   pickables = [core]
+  
+  casing1 = new THREE.Mesh(new THREE.CylinderGeometry(3,3, 5, 20), new THREE.MeshPhongMaterial())
+  core1 = new THREE.Mesh(new THREE.CylinderGeometry(2, 2, 4, 20), new THREE.MeshPhongMaterial({
+    //color: 'red'
+  }))
+  myswitch2 = new THREE.Group();
+  myswitch2.add(casing1, core1);
+  myswitch2.position.set(28,20,15);
+  casing1.position.y = 5;
+  core1.position.y = 6;
+    pickables = [core1]
 
-  document.addEventListener('mousedown', onDocumentMouseDown, false)
+  scene.add(myswitch2);
+  document.addEventListener('mousedown', onDocumentMouseDown2, false)
   
 	window.addEventListener('resize', onWindowResize, false);
 }
-
-
 function onDocumentMouseDown(event) {
   mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
   mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
-
   // find intersections
   raycaster.setFromCamera(mouse, camera);
   var intersects = raycaster.intersectObjects(pickables, false);
@@ -157,9 +169,26 @@ function onDocumentMouseDown(event) {
   } else {
     console.log('no hit')
   }
-
 }
-
+function onDocumentMouseDown2(event1) {
+  mouse.x = (event1.clientX / window.innerWidth) * 2 - 1;
+  mouse.y = -(event1.clientY / window.innerHeight) * 2 + 1;
+  // find intersections
+  raycaster.setFromCamera(mouse, camera);
+  var intersects = raycaster.intersectObjects(pickables, false);
+  if (intersects.length > 0) {
+    lit = !lit; // toggle;
+    if (lit) {
+      core1.material.emissive = new THREE.Color(0x030303);
+      lightr.intensity = 2;
+    } else {
+      core1.material.emissive = new THREE.Color('red');
+      lightr.intensity = 0;
+    }
+  } else {
+    console.log('no hit')
+  }
+}
 function onWindowResize() {
 	  windowHalfX = window.innerWidth / 2;
 	  windowHalfY = window.innerHeight / 2;
@@ -187,7 +216,6 @@ function chair1 (chair, targetSize=40) {
     objLoader.load(chair+'.obj', function(object) {
 		
 		chair =  unitize (object, targetSize);
-
 		chair.position.set(7,20,38);
 	    	chair.rotation.y = -3*(Math.PI/4);
 		scene.add (chair);
@@ -196,7 +224,6 @@ function chair1 (chair, targetSize=40) {
     }, onProgress, onError);
   });
 }
-
 function lantern1 (lantern, targetSize=5) {
   var onProgress = function(xhr) {
     if (xhr.lengthComputable) {
@@ -252,24 +279,23 @@ function unitize (object, targetSize) {
 	return theObject;
 			
 }
-
 function drink() {
 	let geometry = new THREE.Geometry();
 	let sq11 = Math.sqrt(11);
 geometry.vertices.push ( new THREE.Vector3(-5, 0, 5) );//0
   geometry.vertices.push ( new THREE.Vector3( 5, 0, 5) );
-  geometry.vertices.push ( new THREE.Vector3( 5,12, 5) );
-  geometry.vertices.push ( new THREE.Vector3( 5, 12+sq11, 0) );//3
-  geometry.vertices.push ( new THREE.Vector3(-5, 12+sq11, 0) );
-  geometry.vertices.push ( new THREE.Vector3(-5, 12, 5) );
-  geometry.vertices.push ( new THREE.Vector3( 5, 12, -5) );//6
-  geometry.vertices.push ( new THREE.Vector3(-5, 12, -5) );
+  geometry.vertices.push ( new THREE.Vector3( 5,19, 5) );
+  geometry.vertices.push ( new THREE.Vector3( 5, 19+sq11, 0) );//3
+  geometry.vertices.push ( new THREE.Vector3(-5, 19+sq11, 0) );
+  geometry.vertices.push ( new THREE.Vector3(-5, 19, 5) );
+  geometry.vertices.push ( new THREE.Vector3( 5, 19, -5) );//6
+  geometry.vertices.push ( new THREE.Vector3(-5, 19, -5) );
   geometry.vertices.push ( new THREE.Vector3(-5, 0, -5) );
   geometry.vertices.push ( new THREE.Vector3( 5, 0, -5) );//9
-  geometry.vertices.push ( new THREE.Vector3( 5, 17, 0) );
-  geometry.vertices.push ( new THREE.Vector3(-5, 17, 0) );
-  geometry.vertices.push ( new THREE.Vector3(-3, 13, 0) );//12
-  geometry.vertices.push ( new THREE.Vector3( 3, 13, 0) );
+  geometry.vertices.push ( new THREE.Vector3( 5, 24, 0) );
+  geometry.vertices.push ( new THREE.Vector3(-5, 24, 0) );
+  geometry.vertices.push ( new THREE.Vector3(-3, 20, 0) );//12
+  geometry.vertices.push ( new THREE.Vector3( 3, 20, 0) );
   let face;
   face = new THREE.Face3 ( 0, 1, 2 ); face.materialIndex = 0;
   geometry.faces.push (face);
@@ -349,7 +375,7 @@ geometry.vertices.push ( new THREE.Vector3(-5, 0, 5) );//0
   
 	let loader = new THREE.TextureLoader();
   loader.crossOrigin = '';
-  let texture = loader.load ('https://i.imgur.com/bv24XBd.jpg?1');
+  let texture = loader.load ('https://i.imgur.com/Q62e3vj.png');
 	materialArray = [];
 	materialArray.push (new THREE.MeshPhongMaterial ({map: texture}), 
 	
@@ -360,20 +386,13 @@ geometry.vertices.push ( new THREE.Vector3(-5, 0, 5) );//0
   db.receiveShadow = true
   return db;
 }
-
 function animate() {
-
   requestAnimationFrame(animate);
   render();
-
 }
-
 function render() {
-
   renderer.render(scene, camera);
-
 }
-
 </script>
 </body>
 
