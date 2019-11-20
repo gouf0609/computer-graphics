@@ -19,6 +19,8 @@ body {
 var camera, scene, renderer;
 var chair = new THREE.Object3D();
 var modelName = "chair";
+var lantern = new THREE.Object3D();
+var modelName = "lantern";
 init();
 animate();
 
@@ -40,7 +42,7 @@ function init() {
   scene.add(gridXZ);
   
   chair1('chair', 40);
-  
+  lantern1('lantern',40);
   
 	window.addEventListener('resize', onWindowResize, false);
 }
@@ -84,6 +86,36 @@ function chair1 (chair, targetSize=40) {
   });
 }
 
+function lantern1 (lantern, targetSize=40) {
+  var onProgress = function(xhr) {
+    if (xhr.lengthComputable) {
+      var percentComplete = xhr.loaded / xhr.total * 100;
+      console.log(Math.round(percentComplete, 2) + '% downloaded');
+    }
+  };
+  var onError = function(xhr) {};
+  var mtlLoader = new THREE.MTLLoader();
+ // mtlLoader.setPath('models/');
+  mtlLoader.load(lantern+'.mtl', function(materials) {
+    materials.preload();
+    var objLoader = new THREE.OBJLoader();
+    objLoader.setMaterials(materials);
+    //objLoader.setPath('models/');
+    objLoader.load(lantern+'.obj', function(object) {
+		
+		lantern =  unitize (object, targetSize);
+		//theObject.add ( new THREE.BoxHelper (theObject) )
+		//chair.name = 'OBJ'
+	   	lantern.rotation.z = Math.PI/2;
+		//chair.rotation.y = Math.PI;
+		lantern.position.set(50,20,20);
+	    
+		scene.add (lantern);
+		
+		//chair.setRotationFromEuler (new THREE.Euler (3.1416/2, 0, -3.1416/2, 'ZYX'))
+    }, onProgress, onError);
+  });
+}
 function unitize (object, targetSize) {  
 	
 	// find bounding box of 'object'
