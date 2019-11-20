@@ -62,12 +62,12 @@ function chair1 (chair, targetSize=40) {
   };
   var onError = function(xhr) {};
   var mtlLoader = new THREE.MTLLoader();
-  mtlLoader.setPath('https://github.com/gouf0609/computer-graphics/blob/master/');
+  mtlLoader.setPath('models/');
   mtlLoader.load(chair+'.mtl', function(materials) {
     materials.preload();
     var objLoader = new THREE.OBJLoader();
     objLoader.setMaterials(materials);
-    objLoader.setPath('https://github.com/gouf0609/computer-graphics/blob/master/');
+    objLoader.setPath('models/');
     objLoader.load(chair+'.obj', function(object) {
 		
 		chair =  unitize (object, targetSize);
